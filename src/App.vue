@@ -1,5 +1,24 @@
 <script setup>
+import { ref } from "vue"
+
+const data = ref([])
+
 // npm run dev
+async function getData(word) {
+  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+    data.value = json
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 </script>
 
 <template>
@@ -10,7 +29,7 @@
 
 
     <div class="buscador_div">
-      <input type="text" id="buscador" />
+      <input type="text" id="buscador" @input="getData($event.target.value)" />
       <div class="otro_div">
         <img src="./assets/icon-search.svg" class="lupa" />
       </div>
@@ -65,6 +84,12 @@
       <p style="color: var(--clr-primary-400);">Source</p>
       <a style="color: black;" href="https://en.wiktionary.org/wiki/keyboard">https://en.wiktionary.org/wiki/keyboard</a>
     </footer>
+
+    <div>
+      <pre>
+        {{ data }}
+      </pre>
+    </div>
 
   </div>
 </template>
